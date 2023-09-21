@@ -13,6 +13,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.ref }}
+          fetch-depth: 0
 
       - name: Set RELEASE_VERSION
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/tags/some-prefix/}" >> $GITHUB_ENV
@@ -20,11 +21,20 @@ jobs:
       - name: Debug RELEASE_VERSION
         run: echo $RELEASE_VERSION
 
+      - name: Debug git
+        run: |
+          echo "Current branch:"
+          git rev-parse --abbrev-ref HEAD
+          echo "All tags:"
+          git tag
+
       - name: Get previous tag
         id: previousTag
         run: |
           name=$(git --no-pager tag --sort=creatordate --merged ${{ github.ref_name }} | grep '^some-prefix/' | tail -2 | head -1)
           echo "previousTag: $name"
+          debug_output=$(git --no-pager tag --sort=creatordate --merged some-prefix/v1.0.2 | grep '^some-prefix/')
+          echo "Debug output: $debug_output"
           echo "previousTag=$name" >> $GITHUB_ENV
 
       - name: Generate release notes
