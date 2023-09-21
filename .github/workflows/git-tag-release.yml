@@ -28,8 +28,7 @@ jobs:
       - name: Generate release notes
         id: release_notes
         run: |
-          LAST_TAG=$(git describe --tags --abbrev=0)
-          RELEASE_NOTES=$(git log ${{ steps.prev_tag.outputs.tag }}..HEAD --pretty=format:"- %s (%an, %cd)" -- ./packageB)
+          RELEASE_NOTES=$(git log ${{ steps.prev_tag.outputs.tag }}..${{ env.RELEASE_VERSION }} --pretty=format:"- %s (%an, %cd)" -- ./packageB)
           echo "::set-output name=body::$RELEASE_NOTES"
 
       - name: Create GitHub Release
