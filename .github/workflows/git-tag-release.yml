@@ -23,13 +23,14 @@ jobs:
       - name: Get previous tag
         id: prev_tag
         run: |
-          echo "::set-output name=tag::$(git tag --sort=-creatordate | grep -v "some-prefix/${{ env.RELEASE_VERSION }}"| grep '^some-prefix/' | head -n 2 | tail -n 1)"
+          echo "::set-output name=tag::$(git tag --sort=-creatordate | grep '^some-prefix/' | head -n 2 | tail -n 1)"
 
-      - name: Generate release notes
-        id: release_notes
-        run: |
-          RELEASE_NOTES=$(git log ${{ steps.prev_tag.outputs.tag }}..some-prefix/${{ env.RELEASE_VERSION }} --pretty=format:"- %s (%an, %cd)" -- ./packageB)
-          echo "::set-output name=body::$RELEASE_NOTES"
+      - name: Generate changelog
+        id: changelog
+        uses: requarks/changelog-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref_name }}
 
       - name: Create GitHub Release
         uses: actions/create-release@v1
@@ -38,6 +39,6 @@ jobs:
         with:
           tag_name: ${{ env.RELEASE_VERSION }}
           release_name: some-prefix-${{ env.RELEASE_VERSION }}
-          body: ${{ steps.release_notes.outputs.body }}
+          body: ${{ steps.changelog.outputs.changes }}
           draft: false
           prerelease: false
