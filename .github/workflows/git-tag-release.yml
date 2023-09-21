@@ -40,8 +40,19 @@ jobs:
       - name: Generate release notes
         id: release_notes
         run: |
-          RELEASE_NOTES=$(git log ${{ env.previousTag }}..some-prefix/${{ env.RELEASE_VERSION }} --pretty=format:"- %s (%an, %cd)" -- ./packageB)
+          RELEASE_NOTES=$(git log ${{ env.previousTag }}..${{ github.ref_name }} --pretty=format:"- %s (%an, %cd)" -- ./packageB)
           echo "::set-output name=body::$RELEASE_NOTES"
+
+      - name: "Complex Configuration"
+        id: build_changelog
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: mikepenz/release-changelog-builder-action
+        with:
+          fromTag: "${{ env.previousTag }}"
+          toTag: "${{ github.ref_name }}"
+          path: "./packageB"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create GitHub Release
         uses: actions/create-release@v1
