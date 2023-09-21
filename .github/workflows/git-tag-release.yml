@@ -23,7 +23,7 @@ jobs:
       - name: Get previous tag
         id: prev_tag
         run: |
-          echo "::set-output name=tag::$(git tag --sort=-creatordate | grep -v "${RELEASE_VERSION}"| grep '^some-prefix/' | head -n 2 | tail -n 1)"
+          echo "::set-output name=tag::$(git tag --sort=-creatordate | grep -v "some-prefix/${{ env.RELEASE_VERSION }}"| grep '^some-prefix/' | head -n 2 | tail -n 1)"
 
       - name: Generate release notes
         id: release_notes
