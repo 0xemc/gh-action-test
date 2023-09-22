@@ -46,7 +46,7 @@ jobs:
       - name: "Complex Configuration"
         id: build_changelog
         if: startsWith(github.ref, 'refs/tags/')
-        uses: mikepenz/release-changelog-builder-action
+        uses: mikepenz/release-changelog-builder-action@v3
         with:
           fromTag: "${{ env.previousTag }}"
           toTag: "${{ github.ref_name }}"
