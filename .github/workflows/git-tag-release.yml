@@ -54,6 +54,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Display Changelog
+        run: echo "${{ steps.build_changelog.outputs.changelog }}"
+
       - name: Create GitHub Release
         uses: actions/create-release@v1
         env:
@@ -61,6 +64,6 @@ jobs:
         with:
           tag_name: ${{ env.RELEASE_VERSION }}
           release_name: some-prefix-${{ env.RELEASE_VERSION }}
-          body: ${{ steps.release_notes.outputs.body }}
+          body: ${{steps.build_changelog.outputs.changelog}}
           draft: false
           prerelease: false
