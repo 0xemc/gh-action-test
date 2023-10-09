@@ -36,6 +36,7 @@ jobs:
           else
             echo "three"
             VERSION_CHANGED=$(git diff HEAD^ HEAD -- package.json | grep '"version":')
+            echo $VERSION_CHANGED
             if [[ -z "$VERSION_CHANGED" ]]; then
               echo "four"
               echo "Version in package.json has not changed. Exiting."
