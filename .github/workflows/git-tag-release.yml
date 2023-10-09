@@ -43,7 +43,7 @@ jobs:
             if [[ "$VERSION_HEAD" == "$VERSION_PREV" ]]; then
               echo "four"
               echo "Version in package.json has not changed. Exiting."
-              exit 1
+              exit 0
             fi
             echo "five"
             version=v$(jq -r .version package.json)
