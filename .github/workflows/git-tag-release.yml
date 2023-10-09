@@ -67,26 +67,22 @@ jobs:
           echo "Debug output: $debug_output"
           echo "previousTag=$name" >> $GITHUB_ENV
 
-      - name: Generate release notes
+      - name: Generate changelog
         id: release_notes
         run: |
-          RELEASE_NOTES=$(git log ${{ env.previousTag }}..${{ github.ref_name }} --pretty=format:"- %s (%an, %cd)" -- ./packageB)
-          echo "::set-output name=body::$RELEASE_NOTES"
+          RELEASE_NOTES=$(git log ${{ env.previousTag }}..${{ github.ref_name }} --pretty=format:"- %s (%an, %cd)" -- carbonmark-api)
+          # All of this rubbish below is to remove new line characters so that GH doesn't try to execute our release log
+          echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV
+          echo "$RELEASE_NOTES" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
-      - name: Build Changelog
-        id: github_release
-        uses: mikepenz/release-changelog-builder-action@v4
-        with:
-          fromTag: "${{ env.previousTag }}"
-          toTag: "${{ github.ref_name }}"
-          path: "./packageB"
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Display Changelog
-        run: echo "${{ steps.build_changelog.outputs.changelog }}"
-
-      - name: Create Release
-        uses: mikepenz/action-gh-release@v0.2.0-a03 #softprops/action-gh-release
         with:
-          body: ${{steps.github_release.outputs.changelog}}
+          tag_name: ${{ github.ref_name }}
+          release_name: ${{ env.RELEASE_VERSION }}
+          body: ${{ env.RELEASE_NOTES }}
+          draft: true
+          prerelease: false
