@@ -2,13 +2,16 @@ name: Release via Git Tags
 on:
   push:
     branches:
-      - staging
+      - main
+    paths:
+      - "package.json"
     # Pattern matched against refs/tags
     tags:
       - "some-prefix/*"
 jobs:
   release-carbonmark-api:
     # block actions initiated by this or other workflows
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     permissions:
       contents: write
