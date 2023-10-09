@@ -9,7 +9,6 @@ on:
 jobs:
   release-carbonmark-api:
     # block actions initiated by this or other workflows
-    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     permissions:
       contents: write
