@@ -63,14 +63,12 @@ jobs:
         run: |
           name=$(git --no-pager tag --sort=creatordate --merged ${{ github.ref_name }} | grep '^some-prefix/' | tail -2 | head -1)
           echo "previousTag: $name"
-          debug_output=$(git --no-pager tag --sort=creatordate --merged some-prefix/v1.0.2 | grep '^some-prefix/')
-          echo "Debug output: $debug_output"
           echo "previousTag=$name" >> $GITHUB_ENV
 
       - name: Generate changelog
         id: release_notes
         run: |
-          RELEASE_NOTES=$(git log ${{ env.previousTag }}..${{ github.ref_name }} --pretty=format:"- %s (%an, %cd)" -- carbonmark-api)
+          RELEASE_NOTES=$(git log ${{ env.previousTag }}..${{ github.ref_name }} --pretty=format:"- %s (%an, %cd)")
           # All of this rubbish below is to remove new line characters so that GH doesn't try to execute our release log
           echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV
           echo "$RELEASE_NOTES" >> $GITHUB_ENV
