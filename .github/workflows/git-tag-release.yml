@@ -34,9 +34,19 @@ jobs:
               echo "Version in package.json has not changed. Exiting."
               exit 1
             fi
-            version=$(jq -r .version package.json)
+            version=v$(jq -r .version package.json)
             echo "RELEASE_VERSION=$version" >> $GITHUB_ENV
           fi
+
+      - name: Create tag if none exists
+        if: startsWith(github.ref, 'refs/heads/')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.email "0xemc@protonmail.com"
+          git config --global user.name "emc"
+          git tag "some-prefix/${{ env.RELEASE_VERSION }}"
+          git push origin "some-prefix/${{ env.RELEASE_VERSION }}"
 
       - name: Debug RELEASE_VERSION
         run: echo $RELEASE_VERSION
