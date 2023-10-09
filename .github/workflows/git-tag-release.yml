@@ -29,6 +29,11 @@ jobs:
           if [[ "${GITHUB_REF#refs/tags/some-prefix/}" != "$GITHUB_REF" ]]; then
             echo "RELEASE_VERSION=${GITHUB_REF#refs/tags/some-prefix/}" >> $GITHUB_ENV
           else
+            VERSION_CHANGED=$(git diff HEAD^ HEAD -- package.json | grep '"version":')
+            if [[ -z "$VERSION_CHANGED" ]]; then
+              echo "Version in package.json has not changed. Exiting."
+              exit 1
+            fi
             version=$(jq -r .version package.json)
             echo "RELEASE_VERSION=$version" >> $GITHUB_ENV
           fi
