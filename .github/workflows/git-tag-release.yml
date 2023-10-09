@@ -24,6 +24,9 @@ jobs:
       - name: Install jq
         run: sudo apt-get install jq
 
+      - name: Debug GITHUB_REF
+        run: echo $GITHUB_REF
+
       - name: Set RELEASE_VERSION from tag or package.json
         run: |
           if [[ "${GITHUB_REF#refs/tags/some-prefix/}" != "$GITHUB_REF" ]]; then
