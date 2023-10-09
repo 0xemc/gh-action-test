@@ -40,7 +40,7 @@ jobs:
             echo "three"
             echo $VERSION_HEAD
             echo $VERSION_PREV
-            if [[ "$VERSION_HEAD" != "$VERSION_PREV" ]]; then
+            if [[ "$VERSION_HEAD" == "$VERSION_PREV" ]]; then
               echo "four"
               echo "Version in package.json has not changed. Exiting."
               exit 1
